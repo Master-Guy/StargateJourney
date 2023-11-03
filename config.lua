@@ -13,7 +13,7 @@
 settings.define("sg.config", {
     description = "Configuration for the Stargate Journeys dialer",
     default = {
-        ["rotationMode"] = 3,
+        ["rotationMode"] = 2,
         ["debugging"] = false,
         ["maxTicksOpen"] = 200
     },
