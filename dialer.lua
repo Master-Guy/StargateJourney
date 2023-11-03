@@ -10,8 +10,8 @@ if(configExists == false) then
     local configDLFile = fs.open("config.lua", "w")
     configDLFile.write(configDL)
     configDLFile.close()
-    local config = require("config")
 end
+local config = require("config")
 
 local gate = peripheral.find("basic_interface")
 local monitor = peripheral.find("monitor")
