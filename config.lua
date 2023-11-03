@@ -15,5 +15,5 @@ settings.define("sg.config", {
         ["maxTicksOpen"] = 200
     },
     type = "table"
-}
+})
 settings.save()
