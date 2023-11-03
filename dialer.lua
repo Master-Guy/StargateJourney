@@ -1,34 +1,17 @@
--- rotationModes:
--- 0 = Always CW
--- 1 = Always CCW
--- 2 = Alternating
--- 3 = Fastest
-local rotationMode = 3
+local addressesDL = http.get("https://raw.githubusercontent.com/Master-Guy/StargateJourney/master/addresses.lua").readAll()
+local addressesDLFile = fs.open("addresses.lua", "w")
+addressesDLFile.write(addressesDL)
+addressesDLFile.close()
+local addresses = require("addresses")
 
--- Debugging prints extra messages
-local debugging = false
-
--- Automatically close the gate
-local maxTicksOpen = 200 -- 200 = 10sec
-
--- Address book
-local addresses = {
-    {["Old home"] = {5, 21, 31, 26, 33, 29, 12, 16, 0}},
-    {[""] = {}},
-    {["Silverlink"] = {10, 20, 25, 14, 11, 21, 22, 23, 0}},
-    {["SilverFox"] = {6, 18, 19, 15, 27, 28, 35, 5, 0}},
-    {["Dekar"] = {1, 14, 21, 8, 31, 29, 33, 18, 0}},
-    {["XiphodiusTV"] = {3, 8, 28, 33, 16, 14, 23, 25, 0}},
-    {[""] = {}},
-    {["Earth"] = {1, 35, 4, 31, 15, 30, 32, 0}},
-    {["Nether"] = {1, 35, 6, 31, 15, 28, 32, 0}},
-    {["The End"] = {18, 24, 8, 16, 7, 35, 30, 0}},
-    {["Abydos"] = {1, 26, 6, 14, 31, 11, 29, 0}},
-    {["Chulak"] = {1, 8, 2, 22, 14, 36, 19, 0}},
-    {["Lantea"] = {18, 20, 1, 15, 14, 7, 19, 0}}
-}
-
--- !!Do not edit anything below this!! --
+local configExists = fs.exists("config.lua")
+if(configExists == false) then
+    local configDL = http.get("https://raw.githubusercontent.com/Master-Guy/StargateJourney/master/config.lua").readAll()
+    local configDLFile = fs.open("config.lua", "w")
+    configDLFile.write(configDL)
+    configDLFile.close()
+    local config = require("config")
+end
 
 local gate = peripheral.find("basic_interface")
 local monitor = peripheral.find("monitor")
@@ -125,20 +108,20 @@ end
 
 local function checkChevronEngaged()
     local event, chevron, symbol, incoming = os.pullEvent("stargate_chevron_engaged")
-    if(debugging) then print("[D] Chevron "..chevron.." engaged") end
+    if(config["debugging"]) then print("[D] Chevron "..chevron.." engaged") end
     if(incoming == true) then
         logLine("Alert - Incoming")
         dialingOut = false
         dialingAddress = {}
-    end    
+    end
 end
 
 local function lockChevron(chevron, clockwise)
-    if(debugging) then print("[D] calling lockChevron") end
+    if(config["debugging"]) then print("[D] calling lockChevron") end
     if(raisedChevron == false) then
         if(gateRotating == false) then
             gateRotating = true
-            if(rotationMode == 3) then
+            if(config["rotationMode"] == 3) then
                 -- Calculate fastest dialer
                 local from = gate.getCurrentSymbol()
                 stepsCCW = ((chevron - from)+38)%38
@@ -148,9 +131,9 @@ local function lockChevron(chevron, clockwise)
                 else
                     gate.rotateAntiClockwise(chevron)
                 end
-            elseif(rotationMode == 0) then
+            elseif(config["rotationMode"] == 0) then
                 gate.rotateClockwise(chevron)
-            elseif(rotationMode == 1) then
+            elseif(config["rotationMode"] == 1) then
                 gate.rotateAntiClockwise(chevron)
             else
                 if((gate.getChevronsEngaged() % 2)==1) then
@@ -179,17 +162,17 @@ local function lockChevron(chevron, clockwise)
 end
 
 local function doDial()
-    if(debugging) then print("[D] Calling doDial") end
+    if(config["debugging"]) then print("[D] Calling doDial") end
     if(next(dialingAddress) ~= nil) then
         if(dialingAddress.startup == false) then
-            if(debugging) then print("[D] doDial startup") end
+            if(config["debugging"]) then print("[D] doDial startup") end
             gate.disconnectStargate()
             dialingAddress.startup = true
             return
         end
         for i=(gate.getChevronsEngaged()+1), 12 do
             if(dialingAddress["address"] ~= nil and dialingAddress["address"][i] ~= nil and dialingAddress["address"][i] ~= -1) then
-                if(debugging) then print("[D] doDial dialing chevron "..i) end
+                if(config["debugging"]) then print("[D] doDial dialing chevron "..i) end
                 lockChevron(dialingAddress["address"][i], clockwise)
                 if(dialingAddress["address"] ~= nil) then
                     dialingAddress["address"][i] = -1
@@ -200,18 +183,18 @@ local function doDial()
         if(dialingAddress.done == false) then
             dialingAddress = {}
             dialingAddress.done = true
-            if(debugging) then print("[D] Dialing done") end
+            if(config["debugging"]) then print("[D] Dialing done") end
             return
         end
-        if(debugging) then print("[D] No dialing option found") end
+        if(config["debugging"]) then print("[D] No dialing option found") end
         sleep(1)
     end
-    if(debugging) then print("[D] end of doDial()") end
+    if(config["debugging"]) then print("[D] end of doDial()") end
     sleep(1)
 end
 
 local function startDialing(chevrons)
-    if(debugging) then print("[D] startDialing") end
+    if(config["debugging"]) then print("[D] startDialing") end
     gate.endRotation()
     gate.disconnectStargate()
     gate.lowerChevron()
@@ -245,7 +228,7 @@ local function buttonClicked(buttonText)
 end
 
 local function startup()
-    if(debugging) then print("[D] Startup script") end
+    if(config["debugging"]) then print("[D] Startup script") end
     monitor.setTextScale(0.5)
     monitor.setBackgroundColor(colors.black)
     monitor.setTextColor(colors.white)
@@ -261,7 +244,7 @@ local function startup()
 end
 
 local function addButton(xPos, yPos, text)
-    if(debugging) then print("[D] Adding button") end
+    if(config["debugging"]) then print("[D] Adding button") end
     monitor.setCursorPos(xPos, yPos)
     monitor.write(text)
     xEnd, yEnd = monitor.getCursorPos()
@@ -314,8 +297,8 @@ addXButton()
 
 local function tick()
     os.sleep(1)
-    if(debugging) then print("[D] tick") end
-    if(gate.getOpenTime() > (maxTicksOpen * 2)) then
+    if(config["debugging"]) then print("[D] tick") end
+    if(gate.getOpenTime() > (config["maxTicksOpen"] * 2)) then
         logLine("Closing gate due to max open ticks")
         gate.disconnectStargate()
     end
@@ -323,7 +306,7 @@ end
 
 local function getMonitorTouch()
     event, side, xPos, yPos = os.pullEvent("monitor_touch")
-    if(debugging) then print("[D] Got monitor press: " .. xPos .. "/" .. yPos) end
+    if(config["debugging"]) then print("[D] Got monitor press: " .. xPos .. "/" .. yPos) end
     for key, button in pairs(buttons) do
         if(xPos >= button.xPos and xPos <= button.xEnd and yPos >= button.yPos and yPos <= button.yEnd) then
             buttonClicked(button.text)
