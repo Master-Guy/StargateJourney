@@ -1,4 +1,6 @@
-return {
+settings.define("sg.addresses", {
+    description = "Addresses for the Stargate Journeys dialer",
+    default = {
         {["Dekar"]} =           {1,  14, 21, 8,  31, 29, 33, 18, 0},
         {["Master-Guy"]} =      {21, 9,  22, 13, 23, 3,  31, 24, 0},
         {["SilverFox"]} =       {6,  18, 19, 15, 27, 28, 35, 5,  0},
@@ -11,4 +13,7 @@ return {
         {["Abydos"]} =          {1,  26, 6, 14, 31, 11, 29, 0},
         {["Chulak"]} =          {1,  8,  2, 22, 14, 36, 19, 0},
         {["Lantea"]} =          {18, 20, 1, 15, 14, 7,  19, 0}
-}
+    },
+    type = "table"
+})
+settings.save()

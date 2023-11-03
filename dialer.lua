@@ -2,7 +2,8 @@ local addressesDL = http.get("https://raw.githubusercontent.com/Master-Guy/Starg
 local addressesDLFile = fs.open("addresses.lua", "w")
 addressesDLFile.write(addressesDL)
 addressesDLFile.close()
-local addresses = require("addresses")
+shell.run("addresses")
+local addresses = settings.get("sg.addresses")
 
 local configExists = fs.exists("config.lua")
 if(configExists == false) then
@@ -11,7 +12,8 @@ if(configExists == false) then
     configDLFile.write(configDL)
     configDLFile.close()
 end
-local config = require("config")
+shell.run("config")
+local config = settings.get("sg.config")
 
 local gate = peripheral.find("basic_interface")
 local monitor = peripheral.find("monitor")
