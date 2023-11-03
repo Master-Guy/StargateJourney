@@ -1,3 +1,8 @@
+fs.delete("dialer.lua")
+fs.delete("config.lua")
+fs.delete("addresses.lua")
+fs.delete("stargate.log")
+
 local dialer = http.get("https://raw.githubusercontent.com/Master-Guy/StargateJourney/master/dialer.lua").readAll()
 local dialerFile = fs.open("dialer.lua", "w")
 dialerFile.write(dialer)
