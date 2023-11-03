@@ -1,4 +1,5 @@
--- pastebin run 8axhnygN
+-- pastebin run znWHqJZ0
+
 fs.delete("startup.lua")
 
 local dialer = http.get("https://raw.githubusercontent.com/Master-Guy/StargateJourney/master/startup.lua").readAll()
