@@ -2,7 +2,8 @@ settings.define("sg.addresses", {
     description = "Addresses for the Stargate Journeys dialer",
     default = {
         {["Dekar"] =           {1,  14, 21, 8,  31, 29, 33, 18, 0}},
-        {["Master-Guy"] =      {21, 9,  22, 13, 23, 3,  31, 24, 0}},
+        {["Master-Guy"] =      {5,  21, 31, 26, 33, 29, 12, 16, 0}},
+        {["Master-Guy new"] =  {21, 9,  22, 13, 23, 3,  31, 24, 0}},
         {["SilverFox"] =       {6,  18, 19, 15, 27, 28, 35, 5,  0}},
         {["Silverlink"] =      {10, 20, 25, 14, 11, 21, 22, 0}},
         {["XiphodiusTV"] =     {3,  8,  28, 33, 16, 14, 23, 25, 0}},
